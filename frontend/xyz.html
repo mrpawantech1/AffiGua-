@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<script src="/config.js"></script>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AffiGuard – Never Lose Money to Broken Links</title>
+<meta content="Monitor Amazon, Flipkart, and any URL for broken links and out-of-stock products. Real-time Telegram alerts." name="description"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+    /* ── Premium Modern SaaS Variables ── */
+    :root {
+      --bg-base: #000000;
+      --bg-surface: #0A0A0A;
+      --bg-surface-hover: #121212;
+      --bg-card: rgba(255, 255, 255, 0.03);
+      
+      --border-subtle: rgba(255, 255, 255, 0.1);
+      --border-hover: rgba(255, 255, 255, 0.2);
+      
+      --text-main: #EDEDED;
+      --text-muted: #888888;
+      
+      --cyan-accent: #00E5FF;
+      --accent-glow: rgba(0, 229, 255, 0.15);
+      --accent-gradient: linear-gradient(135deg, #00E5FF 0%, #0070F3 100%);
+      
+      --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 24px;
+      
+      --shadow-premium: 0 8px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      --transition-snappy: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* ── Reset & Global ── */
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      margin: 0;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-text-size-adjust: 100%;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(0, 112, 243, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 100% 100%, rgba(0, 229, 255, 0.05) 0%, transparent 40%);
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    
+    *:focus-visible {
+      outline: 2px solid var(--cyan-accent);
+      outline-offset: 2px;
+      border-radius: var(--radius-sm);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    @media (max-width: 768px) { .container { padding: 0 1.25rem; } }
+
+    .section { padding: 8rem 0; }
+    @media (max-width: 768px) { .section { padding: 5rem 0; } }
+
+    /* ── Typography ── */
+    h1, h2, h3, h4 {
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0;
+    }
+
+    .accent {
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: var(--cyan-accent); /* Fallback */
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 1.25rem;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: all var(--transition-snappy);
+      cursor: pointer;
+      gap: 0.5rem;
+      height: 40px;
+      text-decoration: none;
+      border: 1px solid transparent;
+    }
+
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .btn-primary {
+      background: var(--text-main);
+      color: #000;
+      box-shadow: 0 2px 10px rgba(255,255,255,0.1);
+    }
+    .btn-primary:not(:disabled):hover {
+      background: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+    }
+
+    .btn-secondary {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+    }
+    .btn-secondary:hover {
+      background: var(--bg-surface-hover);
+      border-color: var(--border-hover);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+    }
+    .btn-ghost:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-lg { height: 48px; padding: 0 1.75rem; font-size: 1rem; font-weight: 600; }
+    .btn-sm { height: 32px; padding: 0 0.875rem; font-size: 0.8125rem; }
+
+    /* ── Navigation ── */
+    .nav {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .nav-logo {
+      font-weight: 700;
+      font-size: 1.125rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    .nav-logo-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--text-main);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      font-size: 0.75rem;
+    }
+
+    .nav-links {
+      display: none;
+      list-style: none;
+      gap: 2rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color var(--transition-snappy);
+    }
+
+    .nav-links a:hover { color: var(--text-main); }
+
+    @media (min-width: 768px) { .nav-links { display: flex; } }
+
+    .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+
+    .nav-menu-btn {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+    }
+    .nav-menu-btn span {
+      width: 20px;
+      height: 2px;
+      background: var(--text-main);
+      border-radius: 2px;
+    }
+    @media (min-width: 768px) { .nav-menu-btn { display: none; } }
+
+    .mobile-nav {
+      display: none;
+      position: absolute;
+      top: 64px;
+      left: 0;
+      right: 0;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 1.5rem;
+      flex-direction: column;
+      gap: 1.25rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .mobile-nav.open { display: flex; animation: slideDown 0.2s ease-out; }
+    .mobile-nav a {
+      color: var(--text-main);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+    
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 8rem 0 4rem;
+      text-align: center;
+      position: relative;
+    }
+    @media (max-width: 768px) { .hero { padding: 5rem 0 3rem; } }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.375rem 0.875rem;
+      border-radius: 99px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-eyebrow span { color: var(--cyan-accent); font-size: 0.5rem; }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      line-height: 1.05;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero p {
+      max-width: 640px;
+      margin: 0 auto 2.5rem;
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-top: 5rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 3rem;
+    }
+    @media (min-width: 768px) { .hero-stats { grid-template-columns: repeat(4, 1fr); gap: 2rem; } }
+
+    .hero-stat { text-align: left; }
+    .hero-stat-num {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+    }
+    .hero-stat-label {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* ── Free Checker ── */
+    .checker-section { padding: 2rem 0 5rem; }
+
+    .checker-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      box-shadow: var(--shadow-premium);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    @media (max-width: 768px) { .checker-card { padding: 1.5rem; border-radius: var(--radius-md); } }
+
+    .checker-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    }
+
+    .checker-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .checker-subtitle {
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      font-size: 0.9375rem;
+    }
+
+    .checker-form { display: flex; flex-direction: column; gap: 1rem; }
+    .checker-form-disabled { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+
+    .checker-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    @media (min-width: 768px) { .checker-row { grid-template-columns: 1fr 200px; } }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.375rem; }
+    .form-label {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .form-input, .form-select {
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0 1rem;
+      color: var(--text-main);
+      outline: none;
+      transition: all var(--transition-snappy);
+      font-size: 0.9375rem;
+      height: 44px;
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .form-input:focus, .form-select:focus {
+      border-color: var(--cyan-accent);
+      box-shadow: 0 0 0 1px var(--cyan-accent);
+    }
+    .form-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23888888'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 1rem;
+      padding-right: 2.5rem;
+    }
+    .form-select option { background: var(--bg-base); color: var(--text-main); }
+
+    .checker-url-wrap { position: relative; width: 100%; }
+    .checker-url-wrap .form-input { padding-right: 2.5rem; }
+    .checker-clear-btn {
+      position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%);
+      background: transparent; border: none; color: var(--text-muted);
+      width: 24px; height: 24px; border-radius: 4px; font-size: 1.25rem;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .checker-clear-btn:hover { color: var(--text-main); background: rgba(255,255,255,0.1); }
+    .checker-clear-btn.hidden { display: none; }
+
+checker-result {
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      background: var(--bg-surface);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      display: none;
+      animation: fadeUp 0.3s ease-out;
+    }
+    .checker-result.show { display: block; }
+
+    .checker-result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.25rem;
+    }
+
+    .checker-result-item label {
+      display: block; font-size: 0.75rem; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 0.25rem; font-weight: 600; letter-spacing: 0.05em;
+    }
+    .checker-result-item span { font-weight: 500; font-size: 0.9375rem; }
+
+    .checker-declined-notice {
+      background: rgba(255, 59, 48, 0.1);
+      border: 1px solid rgba(255, 59, 48, 0.2);
+      color: #ffbaba; padding: 1rem; border-radius: var(--radius-sm);
+      margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; font-size: 0.875rem;
+    }
+    .hidden { display: none !important; }
+
+    /* ── Features Bento Grid ── */
+    .section-header { text-align: center; max-width: 640px; margin: 0 auto 4rem; }
+    .section-eyebrow { color: var(--text-muted); font-weight: 600; font-size: 0.8125rem; margin-bottom: 0.75rem; }
+    .section-title { font-size: clamp(2rem, 4vw, 2.5rem); margin-bottom: 1rem; }
+    .section-subtitle { font-size: 1.125rem; color: var(--text-muted); }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 2rem;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-snappy);
+    }
+    .feature-card:hover {
+      border-color: var(--border-hover);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .feature-icon {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 8px; font-size: 1.25rem; margin-bottom: 1.25rem;
+    }
+
+    .feature-title { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .feature-desc { color: var(--text-muted); font-size: 0.9375rem; line-height: 1.5; }
+
+    /* ── Pricing ── */
+    .pricing-toggle {
+      display: flex; justify-content: center; background: var(--bg-surface);
+      padding: 4px; border-radius: 99px; width: fit-content; margin: 0 auto 3rem;
+      border: 1px solid var(--border-subtle);
+    }
+    .toggle-btn {
+      padding: 0.5rem 1.25rem; border-radius: 99px; font-weight: 500; font-size: 0.875rem;
+      border: none; background: transparent; color: var(--text-muted); cursor: pointer;
+      transition: all var(--transition-snappy);
+    }
+    .toggle-btn.active { background: var(--text-main); color: #000; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem;
+    }
+
+    /* Target dynamically injected JS classes */
+    .pricing-card {
+      background: var(--bg-base); border: 1px solid var(--border-subtle);
+      padding: 2rem; border-radius: var(--radius-md); display: flex; flex-direction: column; position: relative;
+    }
+    .pricing-card.popular {
+      border-color: var(--cyan-accent);
+      background: linear-gradient(180deg, rgba(0, 229, 255, 0.03) 0%, transparent 100%);
+      box-shadow: 0 8px 30px rgba(0,229,255,0.05);
+    }
+    .pricing-popular-badge {
+      position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+      background: var(--accent-gradient); color: #000; padding: 2px 10px;
+      border-radius: 99px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .pricing-plan-name { font-size: 1rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1rem; }
+    .pricing-price { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.25rem; letter-spacing: -0.04em; }
+    .pricing-price sup { font-size: 1rem; top: -1em; font-weight: 500; margin-right: 2px; color: var(--text-muted); }
+    .pricing-period { color: var(--text-muted); margin-bottom: 2rem; font-size: 0.8125rem; }
+    .pricing-features { margin-bottom: 2rem; flex-grow: 1; display: flex; flex-direction: column; gap: 0.75rem; }
+    .pricing-feature { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.875rem; line-height: 1.4; }
+    .pricing-feature-icon { color: var(--text-main); font-weight: 600; flex-shrink: 0; }
+    .pricing-feature-icon.no { color: #555; font-weight: 400; }
+
+ /* ── Badges ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 0.375rem; padding: 2px 10px;
+      border-radius: 99px; font-size: 0.75rem; font-weight: 500; border: 1px solid var(--border-subtle);
+    }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .badge-active { background: rgba(52, 199, 89, 0.1); color: #34c759; border-color: rgba(52,199,89,0.2); }
+    .badge-broken { background: rgba(255, 59, 48, 0.1); color: #ff3b30; border-color: rgba(255,59,48,0.2); }
+    .badge-out_of_stock { background: rgba(255, 159, 10, 0.1); color: #ff9f0a; border-color: rgba(255,159,10,0.2); }
+    .badge-pending { background: var(--bg-surface); color: var(--text-muted); }
+    .badge-pro { background: rgba(255, 255, 255, 0.05); color: var(--text-main); }
+
+    /* ── Testimonials & Feedback ── */
+    .testimonials-section {
+      padding: 6rem 0;
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+    }
+
+    .testimonials-inner {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    @media (min-width: 1024px) { .testimonials-inner { grid-template-columns: 1fr 1.5fr; gap: 5rem; } }
+
+    .testimonials-heading { font-size: clamp(2rem, 4vw, 2.5rem); margin-bottom: 1rem; }
+    .testimonials-sub { color: var(--text-muted); font-size: 1rem; margin-bottom: 2rem; }
+
+    /* Feedback Form */
+    .feedback-form-wrap {
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+    }
+    .feedback-form-title { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .feedback-form-sub { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem; }
+    
+    .feedback-form-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1rem; }
+    @media (min-width: 640px) { .feedback-form-grid { grid-template-columns: 1fr 1fr; } }
+    
+    textarea.form-input { height: auto; min-height: 80px; padding: 0.75rem 1rem; }
+
+    .star-rating {
+      display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 4px; margin-bottom: 1rem;
+    }
+    .star-rating input { display: none; }
+    .star-rating label {
+      font-size: 1.5rem; color: #333; cursor: pointer; transition: color 0.2s; line-height: 1;
+    }
+    .star-rating input:checked ~ label,
+    .star-rating label:hover,
+    .star-rating label:hover ~ label { color: #EDEDED; } /* Premium neutral star rating instead of gold */
+
+    /* Slider */
+    .slider-wrap { overflow: hidden; border-radius: var(--radius-md); position: relative; }
+    .slider-track { display: flex; align-items: stretch; transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    
+    .testimonial-card {
+      min-width: 100%; background: var(--bg-base); border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md); padding: 2.5rem; flex-shrink: 0; display: flex; flex-direction: column;
+    }
+    
+    .testimonial-stars { display: flex; gap: 2px; margin-bottom: 1.5rem; color: var(--text-main); font-size: 0.875rem; }
+    .star { opacity: 0.8; }
+    
+    .testimonial-text {
+      font-size: 1.125rem; line-height: 1.6; color: var(--text-main); margin-bottom: 2rem; flex-grow: 1; font-weight: 400;
+    }
+    
+    .testimonial-author { display: flex; align-items: center; gap: 1rem; margin-top: auto; }
+    .testimonial-avatar {
+      width: 40px; height: 40px; border-radius: 50%; background: var(--bg-surface);
+      border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 0.875rem; flex-shrink: 0; color: var(--text-main);
+    }
+    .testimonial-name { font-weight: 600; font-size: 0.9375rem; }
+    .testimonial-role { color: var(--text-muted); font-size: 0.8125rem; }
+
+    .slider-dots { display: flex; gap: 6px; justify-content: center; margin-top: 1.5rem; }
+    .slider-dot {
+      width: 24px; height: 2px; background: #333; border: none; cursor: pointer; transition: all 0.3s; padding: 0; border-radius: 2px;
+    }
+    .slider-dot.active { background: var(--text-main); }
+/* ── Footer ── */
+    .footer {
+      padding: 5rem 0 2rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 3rem; margin-bottom: 4rem;
+    }
+    .footer-brand p { color: var(--text-muted); font-size: 0.875rem; margin-top: 1rem; max-width: 280px; }
+    .footer-col h4 { font-size: 0.875rem; font-weight: 600; margin-bottom: 1.25rem; color: var(--text-main); }
+    .footer-col a { display: block; color: var(--text-muted); text-decoration: none; margin-bottom: 0.75rem; font-size: 0.875rem; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--text-main); }
+    .footer-bottom {
+      border-top: 1px solid var(--border-subtle); padding-top: 2rem;
+      display: flex; flex-direction: column; gap: 1rem; align-items: center; justify-content: space-between;
+      color: var(--text-muted); font-size: 0.8125rem;
+    }
+    @media (min-width: 768px) { .footer-bottom { flex-direction: row; } }
+
+    /* ── Utilities ── */
+    .animate-fade-up { animation: fadeUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+
+    .alert-box, .feedback-alert {
+      margin-top: 1rem; padding: 0.75rem 1rem; border-radius: var(--radius-sm); font-size: 0.875rem; display: none;
+    }
+    .show { display: block; }
+    .error { background: rgba(255, 59, 48, 0.1); border: 1px solid rgba(255, 59, 48, 0.2); color: #ffbaba; }
+    .success { background: rgba(52, 199, 89, 0.1); border: 1px solid rgba(52, 199, 89, 0.2); color: #34c759; }
+
+    .spinner {
+      width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: currentColor; border-radius: 50%; animation: spin 0.6s linear infinite; display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      z-index: 1000; display: none; align-items: center; justify-content: center; padding: 1.25rem;
+    }
+    .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    
+    .modal {
+      background: var(--bg-surface); border: 1px solid var(--border-subtle);
+      max-width: 440px; width: 100%; border-radius: var(--radius-md); padding: 2.5rem; text-align: center;
+      box-shadow: var(--shadow-premium);
+    }
+    .terms-modal-icon { font-size: 2.5rem; margin-bottom: 1rem; line-height: 1; opacity: 0.9; }
+    .terms-modal-title { font-size: 1.25rem; margin-bottom: 0.75rem; }
+    .terms-modal-body { color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9375rem; }
+    .terms-modal-body a { color: var(--text-main); text-decoration: underline; text-underline-offset: 4px; }
+    .terms-modal-footer { display: flex; gap: 0.75rem; justify-content: center; }
+    .terms-modal-footer .btn { flex: 1; }
+    .terms-reopen-btn { background: none; border: none; color: var(--text-main); text-decoration: underline; cursor: pointer; padding: 0; font-size: inherit; }
+  </style>
+</head>
+<body>
+<!-- ── Terms Acceptance Modal ───────────────────────────────── -->
+<div aria-labelledby="termsModalTitle" aria-modal="true" class="modal-overlay" id="termsModal" role="dialog">
+<div class="modal terms-modal">
+<div aria-hidden="true" class="terms-modal-icon">🛡</div>
+<h2 class="terms-modal-title" id="termsModalTitle">Before you continue</h2>
+<p class="terms-modal-body">
+      To use the Free Link Checker and other features of AffiGuard,
+      please read and accept our
+      <a href="/terms.html" rel="noopener" target="_blank">Terms &amp; Conditions</a>
+      and
+      <a href="/privacy.html" rel="noopener" target="_blank">Privacy Policy</a>.
+    </p>
+<div class="terms-modal-footer">
+<button class="btn btn-secondary" id="termsDeclineBtn">Decline</button>
+<button class="btn btn-primary" id="termsAcceptBtn">Accept &amp; Continue</button>
+</div>
+</div>
+</div>
+
+<!-- ── Navigation ───────────────────────────────────────────── -->
+<nav class="nav">
+<div class="container nav-inner">
+<a class="nav-logo" href="/">
+<div class="nav-logo-icon">🛡</div>
+        AffiGuard
+      </a>
+<ul class="nav-links">
+<li><a href="#features">Features</a></li>
+<li><a href="#pricing">Pricing</a></li>
+<li><a href="help.html">Help</a></li>
+<li><a href="about.html">About</a></li>
+</ul>
+<div class="nav-actions">
+<a class="btn btn-ghost btn-sm" href="/login">Log in</a>
+<a class="btn btn-primary btn-sm" href="/signup">Get Started</a>
+<button aria-expanded="false" aria-label="Menu" class="nav-menu-btn" id="mobileMenuBtn">
+<span></span><span></span><span></span>
+</button>
+</div>
+</div>
+<div class="mobile-nav" id="mobileNav">
+<a href="#features">Features</a>
+<a href="#pricing">Pricing</a>
+<a href="help.html">Help</a>
+<a href="about.html">About</a>
+<a href="/login">Log in</a>
+</div>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────────── -->
+<section class="hero">
+<div class="container">
+<div class="hero-eyebrow animate-fade-up">
+<span>●</span> Multi-layer monitoring architecture
+    </div>
+<h1 class="animate-fade-up delay-1">
+      Never lose money<br/>to <span class="accent">broken links.</span>
+</h1>
+<p class="animate-fade-up delay-1">
+      Monitor Amazon, Flipkart, and any product URL 24/7.
+      Get sub-second Telegram alerts when links break or go out of stock.
+      Three detection layers. Zero false positives.
+    </p>
+<div class="hero-cta animate-fade-up delay-2">
+<a class="btn btn-primary btn-lg" href="/signup">Start Free</a>
+<a class="btn btn-secondary btn-lg" href="#checker">Try Checker</a>
+</div>
+<div class="hero-stats animate-fade-up delay-2">
+<div class="hero-stat">
+<div class="hero-stat-num">3</div>
+<div class="hero-stat-label">Detection Layers</div>
+</div>
+<div class="hero-stat">
+<div class="hero-stat-num">Hourly</div>
+<div class="hero-stat-label">Max Check Speed</div>
+</div>
+<div class="hero-stat">
+<div class="hero-stat-num">&lt;1s</div>
+<div class="hero-stat-label">Alert Delivery</div>
+</div>
+<div class="hero-stat">
+<div class="hero-stat-num">99.9%</div>
+<div class="hero-stat-label">Uptime Target</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ── Free Checker ──────────────────────────────────────────── -->
+<section class="checker-section" id="checker">
+<div class="container">
+<div class="checker-card animate-fade-up delay-1">
+<div class="checker-title">Diagnostic Checker</div>
+<div class="checker-subtitle">Test any URL instantly. No account required.</div>
+<div class="checker-declined-notice hidden" id="checkerDeclinedNotice" role="alert">
+<span aria-hidden="true">⚠️</span>
+<span>
+          Terms acceptance required to use the diagnostic tool. 
+          <button class="terms-reopen-btn" id="termsReopenBtn">Review Terms</button>
+</span>
+</div>
+<div class="checker-form" id="checkerForm">
+<div class="checker-row">
+<div class="form-group">
+<label class="form-label" for="checkerUrl">Target URL</label>
+<div class="checker-url-wrap">
+<input class="form-input" id="checkerUrl" placeholder="https://www.amazon.in/dp/..." type="url"/>
+<button aria-label="Clear URL" class="checker-clear-btn hidden" id="checkerClearBtn" onclick="clearCheckerUrl()" type="button">×</button>
+</div>
+</div>
+<div class="form-group">
+<label class="form-label" for="checkerPlatform">Platform Profile</label>
+<select class="form-select" id="checkerPlatform">
+<option value="generic">Generic HTTPS</option>
+<option value="amazon">Amazon</option>
+<option value="flipkart">Flipkart</option>
+<option value="shopify">Shopify</option>
+<option value="etsy">Etsy</option>
+</select>
+</div>
+</div>
+<button class="btn btn-primary" id="checkerBtn" onclick="runFreeCheck()" style="margin-top: 0.5rem;">
+<span id="checkerBtnText">Run Diagnostic</span>
+<span class="spinner hidden" id="checkerSpinner"></span>
+</button>
+<div class="alert-box" id="checkerError"></div>
+</div>
+<div class="checker-result" id="checkerResult">
+<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 1rem;">
+<strong style="font-weight: 600; font-size: 1rem;">Diagnostic Results</strong>
+<span id="checkerBadge"></span>
+</div>
+<div class="checker-result-grid">
+<div class="checker-result-item">
+<label>Latency</label>
+<span id="checkerTime">—</span>
+</div>
+<div class="checker-result-item">
+<label>Resolution Layer</label>
+<span id="checkerLayer">—</span>
+</div>
+<div class="checker-result-item" style="grid-column: 1 / -1;">
+<label>Target Analyzed</label>
+<span id="checkerUrl2" style="font-size:0.8125rem;font-family:monospace;word-break:break-all;color:var(--text-muted);">—</span>
+</div>
+</div>
+<div id="checkerErrorMsg" style="margin-top:1rem;font-size:0.875rem;color:#ff3b30;display:none;"></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ── Features ─────────────────────────────────────────────── -->
+<section class="section" id="features">
+<div class="container">
+<div class="section-header">
+<div class="section-eyebrow">Architecture</div>
+<h2 class="section-title">Enterprise reliability.<br/>Built for scale.</h2>
+<p class="section-subtitle">A multi-layered fallback system designed to bypass advanced bot protection and ensure zero missed alerts.</p>
+</div>
+<div class="features-grid">
+<div class="feature-card">
+<div class="feature-icon">⚡</div>
+<div class="feature-title">Layer 1 – HTTP Direct</div>
+<div class="feature-desc">High-speed direct requests utilizing optimized custom headers. Identifies 90% of failures in under 15 seconds.</div>
+</div>
+<div class="feature-card">
+<div class="feature-icon">🔄</div>
+<div class="feature-title">Layer 2 – ScraperAPI</div>
+<div class="feature-desc">Dynamic rendering for JavaScript-heavy infrastructure (Amazon, Flipkart). Leverages authentic browser fingerprints.</div>
+</div>
+<div class="feature-card">
+<div class="feature-icon">🎭</div>
+<div class="feature-title">Layer 3 – Playwright</div>
+<div class="feature-desc">Complete headless Chromium fallback execution. Navigates complex AJAX-loaded stock states with total accuracy.</div>
+</div>
+<div class="feature-card">
+<div class="feature-icon">📱</div>
+<div class="feature-title">Real-time Telegram</div>
+<div class="feature-desc">Immediate push notifications via API. Strict throttling ensures one alert per state change—delivered instantly.</div>
+</div>
+<div class="feature-card">
+<div class="feature-icon">🏷</div>
+<div class="feature-title">Inventory Parsing</div>
+<div class="feature-desc">Proprietary regex and DOM evaluation for specific storefronts to detect granular "Unavailable" or "Sold Out" states.</div>
+</div>
+<div class="feature-card">
+<div class="feature-icon">📊</div>
+<div class="feature-title">Telemetry & Logs</div>
+<div class="feature-desc">Full 90-day retention on every ping. Audit response times and historical uptime patterns via the dashboard.</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ── Supported Platforms ───────────────────────────────────── -->
+<section class="section" style="padding-top:0">
+<div class="container">
+<div style="background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:3rem 2rem;text-align:center;">
+<div class="section-eyebrow" style="margin-bottom:1.5rem;">Native Integrations</div>
+<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:0.75rem;">
+<span class="badge badge-pro">Amazon</span>
+<span class="badge badge-pro">Flipkart</span>
+<span class="badge badge-pro">Shopify</span>
+<span class="badge badge-pro">Etsy</span>
+<span class="badge badge-pro">WordPress</span>
+<span class="badge badge-pro">WooCommerce</span>
+<span class="badge badge-pro">Custom HTTP/S</span>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ── Pricing ───────────────────────────────────────────────── -->
+<section class="section" id="pricing">
+<div class="container">
+<div class="section-header">
+<h2 class="section-title">Transparent pricing</h2>
+<p class="section-subtitle">Start for free. Scale gracefully.</p>
+</div>
+<div class="pricing-toggle">
+<button class="toggle-btn active" id="btnINR" onclick="setCurrency('INR')">INR</button>
+<button class="toggle-btn" id="btnUSD" onclick="setCurrency('USD')">USD</button>
+</div>
+<div class="pricing-grid" id="pricingGrid">
+<!-- Rendered by JS -->
+</div>
+</div>
+</section>
+
+<!-- ── Testimonials & Feedback ───────────────────────────────── -->
+<section class="testimonials-section" id="testimonials">
+<div class="container">
+<div class="testimonials-inner">
+<div>
+<div class="section-eyebrow">Community</div>
+<h2 class="testimonials-heading">Trusted by professionals</h2>
+<p class="testimonials-sub">Feedback directly from performance marketers and engineering teams relying on AffiGuard.</p>
+<div class="feedback-form-wrap">
+<div class="feedback-form-title">Submit Feedback</div>
+<div class="feedback-form-sub">We read every submission.</div>
+<div class="feedback-form-grid">
+<div class="form-group">
+<label class="form-label" for="fbName">Name</label>
+<input class="form-input" id="fbName" placeholder="Jane Doe" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label" for="fbEmail">Email</label>
+<input class="form-input" id="fbEmail" placeholder="jane@example.com" type="email"/>
+</div>
+</div>
+<div class="form-group" style="margin-bottom:1rem;">
+<label class="form-label" for="fbMsg">Message</label>
+<textarea class="form-input" id="fbMsg" placeholder="How has AffiGuard impacted your workflow?" rows="3" style="resize:vertical;"></textarea>
+</div>
+<div class="form-group" style="margin-bottom:1.25rem;">
+<label class="form-label">Rating</label>
+<div class="star-rating" id="starRating">
+<input id="s5" name="rating" type="radio" value="5"/><label for="s5" title="5">★</label>
+<input id="s4" name="rating" type="radio" value="4"/><label for="s4" title="4">★</label>
+<input id="s3" name="rating" type="radio" value="3"/><label for="s3" title="3">★</label>
+<input id="s2" name="rating" type="radio" value="2"/><label for="s2" title="2">★</label>
+<input id="s1" name="rating" type="radio" value="1"/><label for="s1" title="1">★</label>
+</div>
+</div>
+<button class="btn btn-secondary" id="fbSubmitBtn" onclick="submitFeedback()" style="width: 100%;">
+<span id="fbBtnText">Send Feedback</span>
+<span class="spinner hidden" id="fbSpinner"></span>
+</button>
+<div class="feedback-alert" id="fbAlert"></div>
+</div>
+</div>
+<div>
+<div class="slider-wrap" id="testimonialSlider">
+<div class="slider-track" id="sliderTrack">
+<div class="testimonial-card">
+<div class="testimonial-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+<p class="testimonial-text">"AffiGuard saved me during a major sale event. My Amazon affiliate link had gone out-of-stock and I had no idea. The Telegram alert came within minutes — I swapped the link before losing thousands in commissions."</p>
+<div class="testimonial-author">
+<div class="testimonial-avatar">RS</div>
+<div><div class="testimonial-name">Rahul Sharma</div><div class="testimonial-role">Affiliate Marketer</div></div>
+</div>
+</div>
+<div class="testimonial-card">
+<div class="testimonial-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+<p class="testimonial-text">"I run a Flipkart affiliate blog with 80+ product links. Before AffiGuard, I'd find broken links weeks later. Now I get instant alerts. My CTR improved because readers trust that my links always work."</p>
+<div class="testimonial-author">
+<div class="testimonial-avatar">PK</div>
+<div><div class="testimonial-name">Priya Krishnan</div><div class="testimonial-role">Tech Publisher</div></div>
+</div>
+</div>
+<div class="testimonial-card">
+<div class="testimonial-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star" style="opacity:0.3">★</span></div>
+<p class="testimonial-text">"We use this for our WooCommerce store to monitor 30+ product landing pages. The ScraperAPI layer handles our JS-heavy pages perfectly. Setup was under 5 minutes and the API integration is seamless."</p>
+<div class="testimonial-author">
+<div class="testimonial-avatar">AM</div>
+<div><div class="testimonial-name">Arjun Mehta</div><div class="testimonial-role">E-commerce Director</div></div>
+</div>
+</div>
+<div class="testimonial-card">
+<div class="testimonial-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+<p class="testimonial-text">"As a content creator who reviews products, broken affiliate links are my nightmare. AffiGuard's free tier covers my basics perfectly, and when I needed more, upgrading was instant. The dashboard is flawlessly executed."</p>
+<div class="testimonial-author">
+<div class="testimonial-avatar">SN</div>
+<div><div class="testimonial-name">Sneha Nair</div><div class="testimonial-role">Creator &amp; Reviewer</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="slider-dots" id="sliderDots"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- ── Footer ────────────────────────────────────────────────── -->
+<footer class="footer">
+<div class="container">
+<div class="footer-grid">
+<div class="footer-brand">
+<a class="nav-logo" href="/">
+<div class="nav-logo-icon" style="width:20px;height:20px;font-size:0.65rem;">🛡</div>
+          AffiGuard
+        </a>
+<p>Enterprise-grade link monitoring architecture for the modern web.</p>
+</div>
+<div class="footer-col">
+<h4>Platform</h4>
+<a href="#features">Features</a>
+<a href="#pricing">Pricing</a>
+<a href="/dashboard">Dashboard</a>
+</div>
+<div class="footer-col">
+<h4>Resources</h4>
+<a href="help.html">Documentation</a>
+<a href="contact.html">Contact Support</a>
+<a href="about.html">About Us</a>
+</div>
+<div class="footer-col">
+<h4>Legal</h4>
+<a href="terms.html">Terms of Service</a>
+<a href="privacy.html">Privacy Policy</a>
+</div>
+</div>
+<div class="footer-bottom">
+<p>© 2026 AffiGuard Inc. All rights reserved.</p>
+</div>
+</div>
+</footer>
+
+<script>
+// ── API Base ─────────────────────────────────────────────────
+const API = window.__BACKEND_URL || '';
+
+// ── Terms Consent ────────────────────────────────────────────
+(function () {
+  var STORAGE_KEY   = 'affiguard_terms_accepted';
+
+  var termsModal    = document.getElementById('termsModal');
+  var acceptBtn     = document.getElementById('termsAcceptBtn');
+  var declineBtn    = document.getElementById('termsDeclineBtn');
+  var reopenBtn     = document.getElementById('termsReopenBtn');
+  var checkerForm   = document.getElementById('checkerForm');
+  var declinedNote  = document.getElementById('checkerDeclinedNotice');
+  var checkerUrl    = document.getElementById('checkerUrl');
+  var checkerPlat   = document.getElementById('checkerPlatform');
+  var checkerBtn    = document.getElementById('checkerBtn');
+
+  function hasAccepted() {
+    try { return localStorage.getItem(STORAGE_KEY) === 'true'; }
+    catch (e) { return false; }
+  }
+
+  function enableChecker() {
+    checkerUrl.disabled  = false;
+    checkerPlat.disabled = false;
+    checkerBtn.disabled  = false;
+    checkerForm.classList.remove('checker-form-disabled');
+    declinedNote.classList.add('hidden');
+  }
+
+  function disableChecker() {
+    checkerUrl.disabled  = true;
+    checkerPlat.disabled = true;
+    checkerBtn.disabled  = true;
+    checkerForm.classList.add('checker-form-disabled');
+    declinedNote.classList.remove('hidden');
+  }
+
+  function openTermsModal() {
+    termsModal.classList.add('open');
+    requestAnimationFrame(function () { acceptBtn.focus(); });
+  }
+
+  function closeTermsModal() {
+    termsModal.classList.remove('open');
+  }
+
+  if (hasAccepted()) {
+    enableChecker();
+  } else {
+    disableChecker();
+    openTermsModal();
+  }
+
+  acceptBtn.addEventListener('click', function () {
+    try { localStorage.setItem(STORAGE_KEY, 'true'); } catch (e) {}
+    closeTermsModal();
+    enableChecker();
+  });
+
+  declineBtn.addEventListener('click', function () {
+    closeTermsModal();
+    disableChecker();
+  });
+
+  if (reopenBtn) {
+    reopenBtn.addEventListener('click', function () {
+      openTermsModal();
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && termsModal.classList.contains('open')) {
+      closeTermsModal();
+      if (!hasAccepted()) disableChecker();
+    }
+  });
+})();
+
+// ── Mobile Menu ──────────────────────────────────────────────
+(function () {
+  var menuBtn   = document.getElementById('mobileMenuBtn');
+  var mobileNav = document.getElementById('mobileNav');
+  if (!menuBtn || !mobileNav) return;
+
+  function openMenu() {
+    mobileNav.classList.add('open');
+    menuBtn.setAttribute('aria-expanded', 'true');
+  }
+  function closeMenu() {
+    mobileNav.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded', 'false');
+  }
+  function isMenuOpen() {
+    return mobileNav.classList.contains('open');
+  }
+
+  menuBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    isMenuOpen() ? closeMenu() : openMenu();
+  });
+  document.addEventListener('click', function (e) {
+    if (isMenuOpen() && !mobileNav.contains(e.target) && !menuBtn.contains(e.target)) {
+      closeMenu();
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isMenuOpen()) {
+      closeMenu();
+      menuBtn.focus();
+    }
+  });
+  mobileNav.querySelectorAll('a').forEach(function (link) {
+    link.addEventListener('click', closeMenu);
+  });
+})();
+
+// ── Free Checker ─────────────────────────────────────────────
+async function runFreeCheck() {
+  var url       = document.getElementById('checkerUrl').value.trim();
+  var platform  = document.getElementById('checkerPlatform').value;
+  var btn       = document.getElementById('checkerBtn');
+  var spinner   = document.getElementById('checkerSpinner');
+  var btnText   = document.getElementById('checkerBtnText');
+  var errBox    = document.getElementById('checkerError');
+  var resultDiv = document.getElementById('checkerResult');
+
+  if (!url) {
+    showAlert(errBox, 'Please enter a URL to check.', 'error');
+    return;
+  }
+
+  btn.disabled = true;
+  spinner.classList.remove('hidden');
+  btnText.textContent = 'Analyzing...';
+  errBox.className = 'alert-box';
+  resultDiv.classList.remove('show');
+
+  try {
+    var resp = await fetch(API + '/api/check-single', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: url, platform: platform }),
+    });
+    var data = await resp.json();
+
+    if (!resp.ok) {
+      showAlert(errBox, data.error || 'Check failed. Try again.', 'error');
+      return;
+    }
+
+    document.getElementById('checkerBadge').innerHTML = buildBadge(data.status);
+    document.getElementById('checkerTime').textContent =
+      data.response_time ? data.response_time + ' ms' : '—';
+    document.getElementById('checkerLayer').textContent = data.layer_used || '—';
+    document.getElementById('checkerUrl2').textContent  = url;
+    var errMsg = document.getElementById('checkerErrorMsg');
+    if (data.error) {
+      errMsg.textContent  = 'Note: ' + data.error;
+      errMsg.style.display = 'block';
+    } else {
+      errMsg.style.display = 'none';
+    }
+    resultDiv.classList.add('show');
+
+  } catch (e) {
+    showAlert(errBox, 'Network error. Check your connection.', 'error');
+  } finally {
+    btn.disabled = false;
+    spinner.classList.add('hidden');
+    btnText.textContent = 'Run Diagnostic';
+  }
+}
+
+document.getElementById('checkerUrl').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') runFreeCheck();
+});
+
+var _checkerUrlInput = document.getElementById('checkerUrl');
+var _checkerClearBtn = document.getElementById('checkerClearBtn');
+function _toggleCheckerClearBtn() {
+  if (_checkerUrlInput.value.trim().length > 0) {
+    _checkerClearBtn.classList.remove('hidden');
+  } else {
+    _checkerClearBtn.classList.add('hidden');
+  }
+}
+_checkerUrlInput.addEventListener('input', _toggleCheckerClearBtn);
+_checkerUrlInput.addEventListener('paste', function () {
+  setTimeout(_toggleCheckerClearBtn, 0);
+});
+
+function clearCheckerUrl() {
+  _checkerUrlInput.value = '';
+  _checkerClearBtn.classList.add('hidden');
+  _checkerUrlInput.focus();
+}
+
+function buildBadge(status) {
+  var labels = {
+    active: 'Active', broken: 'Broken',
+    out_of_stock: 'Out of Stock', error: 'Error', pending: 'Pending'
+  };
+  var cls   = 'badge badge-' + (status || 'pending');
+  var label = labels[status] || status;
+  return '<span class="' + cls + '"><span class="badge-dot"></span>' + label + '</span>';
+}
+
+function showAlert(el, msg, type) {
+  el.textContent = msg;
+  el.className   = 'alert-box show ' + type;
+}
+
+// ── Pricing ──────────────────────────────────────────────────
+var plans = [
+  {
+    key: 'free', name: 'Free', inr: 0, usd: 0,
+    links: 15, frequency: 'Every 12 hrs',
+    features: [
+      '15 monitored links',
+      'Every 12-hour checks',
+      'Broken link detection',
+      'Out-of-stock detection',
+      'Telegram alerts (within 1 min)',
+      '7-day check history',
+      'HTTP layer only',
+    ],
+    nope: ['Email alerts', 'ScraperAPI layer'],
+  },
+  {
+    key: 'basic', name: 'Basic', inr: 0, usd: 15,
+    links: 50, frequency: 'Every 6 hrs',
+    features: [
+      '50 monitored links',
+      'Every 6-hour checks',
+      'Broken link & out-of-stock detection',
+      'Telegram alerts (instant)',
+      '90-day check history',
+      'HTTP + ScraperAPI layers',
+    ],
+    nope: ['Email alerts'],
+  },
+  {
+    key: 'pro', name: 'Pro', inr: 0, usd: 35,
+    links: 150, frequency: 'Every 2 hrs',
+    popular: true,
+    features: [
+      '150 monitored links',
+      'Every 2-hour checks',
+      'Broken link & out-of-stock detection',
+      'Telegram alerts (instant)',
+      'Email alerts ✉️',
+      '90-day check history',
+      'HTTP + ScraperAPI layers',
+    ],
+    nope: [],
+  },
+  {
+    key: 'business', name: 'Business', inr: 0, usd: 99,
+    links: 500, frequency: 'Every 1 hr',
+    features: [
+      '500+ monitored links',
+      'Every 1-hour checks',
+      'Broken link & out-of-stock detection',
+      'Telegram alerts (instant)',
+      'Email alerts ✉️',
+      '90-day check history',
+      'HTTP + ScraperAPI layers',
+      'Dedicated support',
+    ],
+    nope: [],
+  },
+];
+
+var currency = 'INR';
+
+function setCurrency(c) {
+  currency = c;
+  document.getElementById('btnINR').classList.toggle('active', c === 'INR');
+  document.getElementById('btnUSD').classList.toggle('active', c === 'USD');
+  renderPricing();
+}
+
+function renderPricing() {
+  var sym  = currency === 'INR' ? '₹' : '$';
+  var grid = document.getElementById('pricingGrid');
+  grid.innerHTML = plans.map(function (p) {
+    var price     = currency === 'INR' ? p.inr : p.usd;
+    var priceHtml = price === 0
+      ? '<div class="pricing-price">Free</div>'
+      : '<div class="pricing-price"><sup>' + sym + '</sup>' + price + '</div>';
+    var feats = p.features.map(function (f) {
+      return '<div class="pricing-feature"><span class="pricing-feature-icon">✓</span>' + f + '</div>';
+    }).join('');
+    var nopes = (p.nope || []).map(function (f) {
+      return '<div class="pricing-feature"><span class="pricing-feature-icon no">—</span><span style="color:var(--text-muted)">' + f + '</span></div>';
+    }).join('');
+    return '<div class="pricing-card' + (p.popular ? ' popular' : '') + '">'
+      + (p.popular ? '<div class="pricing-popular-badge">Most Popular</div>' : '')
+      + '<div class="pricing-plan-name">' + p.name + '</div>'
+      + priceHtml
+      + '<div class="pricing-period">' + (price === 0 ? 'Forever free' : 'per month') + '</div>'
+      + '<div class="pricing-features">' + feats + nopes + '</div>'
+      + '<a href="/signup" class="btn ' + (p.popular ? 'btn-primary' : 'btn-secondary') + '" style="width:100%;">'
+      + (price === 0 ? 'Get Started' : 'Select ' + p.name)
+      + '</a></div>';
+  }).join('');
+}
+
+renderPricing();
+
+// ── Testimonials Slider ───────────────────────────────────────
+(function () {
+  var track  = document.getElementById('sliderTrack');
+  var dotsEl = document.getElementById('sliderDots');
+  if (!track || !dotsEl) return;
+
+  var cards   = track.querySelectorAll('.testimonial-card');
+  var total   = cards.length;
+  var current = 0;
+  var timer;
+
+  for (var i = 0; i < total; i++) {
+    var dot = document.createElement('button');
+    dot.className = 'slider-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+    dot.dataset.idx = i;
+    dot.addEventListener('click', function () {
+      goTo(parseInt(this.dataset.idx));
+      resetTimer();
+    });
+    dotsEl.appendChild(dot);
+  }
+
+  function goTo(idx) {
+    current = (idx + total) % total;
+    track.style.transform = 'translateX(-' + (current * 100) + '%)';
+    dotsEl.querySelectorAll('.slider-dot').forEach(function (d, i) {
+      d.classList.toggle('active', i === current);
+    });
+  }
+
+  function next() { goTo(current + 1); }
+
+  function resetTimer() {
+    clearInterval(timer);
+    timer = setInterval(next, 5000);
+  }
+
+  resetTimer();
+
+  var wrap = document.getElementById('testimonialSlider');
+  if (wrap) {
+    wrap.addEventListener('mouseenter', function () { clearInterval(timer); });
+    wrap.addEventListener('mouseleave', resetTimer);
+  }
+
+  var startX = 0;
+  track.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend', function (e) {
+    var dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 40) { dx < 0 ? goTo(current + 1) : goTo(current - 1); resetTimer(); }
+  });
+})();
+
+// ── Feedback Submit ───────────────────────────────────────────
+async function submitFeedback() {
+  var name    = document.getElementById('fbName').value.trim();
+  var email   = document.getElementById('fbEmail').value.trim();
+  var message = document.getElementById('fbMsg').value.trim();
+  var ratingEl = document.querySelector('input[name="rating"]:checked');
+  var rating  = ratingEl ? parseInt(ratingEl.value) : null;
+  var alertEl = document.getElementById('fbAlert');
+  var btn     = document.getElementById('fbSubmitBtn');
+  var spinner = document.getElementById('fbSpinner');
+  var btnText = document.getElementById('fbBtnText');
+
+  if (!message) {
+    alertEl.textContent = 'Please write a message.';
+    alertEl.className = 'feedback-alert show error';
+    return;
+  }
+
+  btn.disabled = true;
+  spinner.classList.remove('hidden');
+  btnText.textContent = 'Submitting...';
+
+  try {
+    var resp = await fetch(API + '/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, email: email, message: message, rating: rating }),
+    });
+    var data = await resp.json();
+    if (resp.ok) {
+      alertEl.textContent = 'Thank you! Your feedback has been recorded.';
+      alertEl.className = 'feedback-alert show success';
+      document.getElementById('fbName').value = '';
+      document.getElementById('fbEmail').value = '';
+      document.getElementById('fbMsg').value = '';
+      var checked = document.querySelector('input[name="rating"]:checked');
+      if (checked) checked.checked = false;
+    } else {
+      alertEl.textContent = data.error || 'Submission failed.';
+      alertEl.className = 'feedback-alert show error';
+    }
+  } catch (e) {
+    alertEl.textContent = 'Network error. Please try again.';
+    alertEl.className = 'feedback-alert show error';
+  } finally {
+    btn.disabled = false;
+    spinner.classList.add('hidden');
+    btnText.textContent = 'Send Feedback';
+  }
+}
+</script>
+</body>
+</html>
